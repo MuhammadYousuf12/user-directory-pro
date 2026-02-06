@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:profile_ui_practice/models/user_model.dart';
 import 'package:profile_ui_practice/screens/add_details.dart';
-import 'package:profile_ui_practice/info_card.dart';
+import 'package:profile_ui_practice/info_card.dart'; // Ensure path is correct
+import 'package:profile_ui_practice/services/storage_services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,10 +13,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Image Picker Instence
   final ImagePicker picker = ImagePicker();
+  File? _image;
+  List<UserModel> users = []; // Our main list
 
-  // Image Picker Function
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserList();
+  }
+
+  // Loads data from Shared Preferences
+  Future<void> _initializeUserList() async {
+    final savedData = await StorageServices.loadUsers();
+    setState(() {
+      users = savedData;
+    });
+  }
+
   Future<void> pickImage() async {
     try {
       final XFile? pickedFile = await picker.pickImage(
@@ -31,27 +47,12 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  List<Map<String, dynamic>> profileData = [
-    {"title": "Full Name", "value": "Muhammad Yousuf", "icon": Icons.person},
-    {
-      "title": "Email Address",
-      "value": "muhammad.yousuf01@gmail.com",
-      "icon": Icons.email,
-    },
-    {"title": "Phone Number", "value": "+92 322 2591216", "icon": Icons.phone},
-    {
-      "title": "Location",
-      "value": "Karachi, Pakistan",
-      "icon": Icons.location_on,
-    },
-    {
-      "title": "Designation",
-      "value": "Flutter Intern in Training",
-      "icon": Icons.work,
-    },
-    {"title": "Education", "value": "Intermediate", "icon": Icons.school},
-  ];
-  File? _image;
+  // Helper function to convert String from storage to IconData for UI
+  IconData _getIconData(String iconName) {
+    if (iconName == 'work') return Icons.work;
+    return Icons.person; // Default
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +63,10 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
+          // Image Picker Logic
           GestureDetector(
-            onTap: () {
-              pickImage();
-            },
+            onTap: pickImage,
             child: Center(
               child: CircleAvatar(
                 radius: 60,
@@ -78,42 +78,69 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
+
+          // User List
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(15),
-              child: ListView.builder(
-                itemCount: profileData.length,
-                itemBuilder: (context, index) {
-                  return InfoCard(
-                    title: profileData[index]["title"],
-                    value: profileData[index]["value"],
-                    icon: profileData[index]["icon"],
-                    onDelete: () {
-                      setState(() {
-                        profileData.removeAt(index);
-                      });
-                    },
-                  );
-                },
-              ),
+              padding: const EdgeInsets.all(15),
+              child: users.isEmpty
+                  ? const Center(child: Text("No users added yet"))
+                  : ListView.builder(
+                      itemCount: users.length,
+                      itemBuilder: (context, index) {
+                        final user = users[index];
+
+                        // Using your custom InfoCard here
+                        return InfoCard(
+                          user: user,
+                          icon: _getIconData(
+                            user.icon,
+                          ), // Converting String to IconData
+                          onDelete: () async {
+                            setState(() {
+                              users.removeAt(index);
+                            });
+                            // Updating storage after deletion
+                            await StorageServices.saveUsers(users);
+                          },
+                        );
+                      },
+                    ),
             ),
           ),
         ],
       ),
+
+      // Floating Action Button to Add New User
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
         onPressed: () async {
-          final data = await Navigator.push(
+          // Navigate to AddDetails screen and wait for result
+          final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddDetails()),
+            MaterialPageRoute(builder: (context) => const AddDetails()),
           );
-          if (data != null) {
+
+          // If we got data back (User clicked Save)
+          if (result != null && result is Map<String, dynamic>) {
+            final newUser = UserModel(
+              name: result['name'],
+              profession: result['profession'],
+              email: result['email'],
+              skills: result['skills'],
+              phone: result['phone'],
+              icon: result['icon'],
+            );
+
             setState(() {
-              profileData.add(data);
+              users.add(newUser);
             });
+
+            // Save to local storage
+            await StorageServices.saveUsers(users);
           }
         },
-        child: Icon(Icons.add),
       ),
     );
   }

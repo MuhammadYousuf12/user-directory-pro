@@ -8,13 +8,20 @@ class AddDetails extends StatefulWidget {
 }
 
 class _AddDetailsState extends State<AddDetails> {
-  final titleController = TextEditingController();
-  final valueController = TextEditingController();
+  // Defined here because they belong to this screen
+  final nameController = TextEditingController();
+  final professionController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final skillsController = TextEditingController();
 
   @override
   void dispose() {
-    titleController.dispose();
-    valueController.dispose();
+    nameController.dispose();
+    professionController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    skillsController.dispose();
     super.dispose();
   }
 
@@ -27,36 +34,58 @@ class _AddDetailsState extends State<AddDetails> {
         title: const Text("Add New Detail"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             TextField(
-              controller: titleController,
-              decoration: InputDecoration(
-                labelText: "Enter Title (e.g. GitHub)",
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Enter Name"),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: professionController,
+              decoration: const InputDecoration(labelText: "Enter Profession"),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Enter Email"),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: "Enter Phone Number",
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 20),
             TextField(
-              controller: valueController,
-              decoration: InputDecoration(labelText: "Enter Username"),
+              controller: skillsController,
+              decoration: const InputDecoration(labelText: "Enter Skills"),
             ),
-            SizedBox(height: 25),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if (titleController.text.isNotEmpty &&
-                    valueController.text.isNotEmpty) {
+                if (nameController.text.isNotEmpty &&
+                    professionController.text.isNotEmpty) {
+                  // Passing data back to Login Page
+                  // Note: We are sending 'icon' as a String here
                   Map<String, dynamic> userInput = {
-                    "title": titleController.text.trim(),
-                    "value": valueController.text.trim(),
-                    "icon": Icons.add_task,
+                    "name": nameController.text.trim(),
+                    "profession": professionController.text.trim(),
+                    "email": emailController.text.trim(),
+                    "phone": phoneController.text.trim(),
+                    "skills": skillsController.text.trim(),
+                    "icon": "person", // Default icon string
                   };
+
                   Navigator.pop(context, userInput);
                 } else {
                   debugPrint("Please fill all fields");
                 }
               },
-              child: Text("Save"),
+              child: const Text("Save"),
             ),
           ],
         ),

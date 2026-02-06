@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:profile_ui_practice/models/user_model.dart';
+import 'package:profile_ui_practice/screens/user_details.dart';
 
 class InfoCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
+  final UserModel user;
+  final IconData icon; // UI expects IconData here
   final VoidCallback onDelete;
+
   const InfoCard({
     super.key,
-    required this.title,
-    required this.value,
+    required this.user,
     required this.icon,
     required this.onDelete,
   });
@@ -18,13 +19,25 @@ class InfoCard extends StatelessWidget {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        subtitle: Text(value),
-        trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserDetail(user: user)),
+          );
+        },
+        child: ListTile(
+          leading: Icon(icon, size: 30, color: Colors.blue),
+          title: Text(
+            user.name,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(user.profession),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: onDelete,
+          ),
         ),
       ),
     );
