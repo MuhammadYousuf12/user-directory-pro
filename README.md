@@ -1,16 +1,18 @@
-# profile_ui_practice
+User Directory Pro
+This is a personal project I’m building to master Flutter's core concepts. My main focus here is moving beyond basic UI and learning how to handle data professionally and write scalable code.
 
-A new Flutter project.
+Key Features & Progress:
+Object-Oriented Data Handling: Instead of passing individual strings between screens, I’ve implemented a global UserModel. This makes the code much cleaner and easier to maintain.
 
-## Getting Started
+Local Persistence: I’m using Shared Preferences to ensure user data is saved locally on the device.
 
-This project is a starting point for a Flutter application.
+Custom UI & UX: Built a dynamic profile listing with Material 3 design, using InkWell for better touch feedback and a dedicated details screen for each user.
 
-A few resources to get you started if this is your first Flutter project:
+Modular Structure: The project is organized into Models, Services, and Screens to follow industry-standard folder structures.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+What's Next?
+Implementing an Edit feature to update existing user profiles.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Migrating from local storage to Firebase for real-time data sync.
+
+Adding a search functionality to filter through the user list.
