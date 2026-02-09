@@ -15,12 +15,39 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final ImagePicker picker = ImagePicker();
   File? _image;
-  List<UserModel> users = []; // Our main list
+  List<UserModel> users = []; // Main list
 
   @override
   void initState() {
     super.initState();
     _initializeUserList();
+  }
+
+  void handleUserForm({UserModel? data, int? i}) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddDetails(userToEdit: data, index: i),
+      ),
+    );
+
+    if (result == null) return;
+
+    setState(() {
+      // Map converts into UserModel
+      UserModel updatedUser = UserModel(
+        name: result['name'],
+        profession: result['profession'],
+        email: result['email'],
+        skills: result['skills'],
+        phone: result['phone'],
+        icon: result['icon'],
+      );
+
+      (i == null) ? users.add(updatedUser) : users[i] = updatedUser;
+    });
+
+    await StorageServices.saveUsers(users);
   }
 
   // Loads data from Shared Preferences
@@ -97,6 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                           icon: _getIconData(
                             user.icon,
                           ), // Converting String to IconData
+                          onEdit: () => handleUserForm(data: user, i: index),
                           onDelete: () async {
                             setState(() {
                               users.removeAt(index);
@@ -115,32 +143,7 @@ class _LoginPageState extends State<LoginPage> {
       // Floating Action Button to Add New User
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () async {
-          // Navigate to AddDetails screen and wait for result
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddDetails()),
-          );
-
-          // If we got data back (User clicked Save)
-          if (result != null && result is Map<String, dynamic>) {
-            final newUser = UserModel(
-              name: result['name'],
-              profession: result['profession'],
-              email: result['email'],
-              skills: result['skills'],
-              phone: result['phone'],
-              icon: result['icon'],
-            );
-
-            setState(() {
-              users.add(newUser);
-            });
-
-            // Save to local storage
-            await StorageServices.saveUsers(users);
-          }
-        },
+        onPressed: () => handleUserForm(),
       ),
     );
   }

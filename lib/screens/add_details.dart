@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:profile_ui_practice/models/user_model.dart';
 
 class AddDetails extends StatefulWidget {
-  const AddDetails({super.key});
+  final UserModel? userToEdit;
+  final int? index;
+
+  const AddDetails({super.key, this.userToEdit, this.index});
 
   @override
   State<AddDetails> createState() => _AddDetailsState();
 }
 
 class _AddDetailsState extends State<AddDetails> {
-  // Defined here because they belong to this screen
   final nameController = TextEditingController();
   final professionController = TextEditingController();
   final emailController = TextEditingController();
@@ -26,6 +29,19 @@ class _AddDetailsState extends State<AddDetails> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.userToEdit != null) {
+      nameController.text = widget.userToEdit!.name;
+      professionController.text = widget.userToEdit!.profession;
+      emailController.text = widget.userToEdit!.email;
+      phoneController.text = widget.userToEdit!.phone;
+      skillsController.text = widget.userToEdit!.skills;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +49,7 @@ class _AddDetailsState extends State<AddDetails> {
         backgroundColor: Colors.blue,
         title: const Text("Add New Detail"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -67,22 +83,28 @@ class _AddDetailsState extends State<AddDetails> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.isNotEmpty &&
-                    professionController.text.isNotEmpty) {
+                if (nameController.text.trim().isNotEmpty &&
+                    professionController.text.trim().isNotEmpty) {
                   // Passing data back to Login Page
-                  // Note: We are sending 'icon' as a String here
+                  // Note: 'icon' is sending as a String here
                   Map<String, dynamic> userInput = {
                     "name": nameController.text.trim(),
                     "profession": professionController.text.trim(),
                     "email": emailController.text.trim(),
                     "phone": phoneController.text.trim(),
-                    "skills": skillsController.text.trim(),
-                    "icon": "person", // Default icon string
+                    "skills": skillsController.text
+                        .split(',')
+                        .map((e) => e.trim())
+                        .where((e) => e.isNotEmpty)
+                        .join(','),
+                    "icon": "person",
                   };
 
                   Navigator.pop(context, userInput);
                 } else {
-                  debugPrint("Please fill all fields");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please fill all fields!")),
+                  );
                 }
               },
               child: const Text("Save"),

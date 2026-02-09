@@ -5,12 +5,14 @@ import 'package:profile_ui_practice/screens/user_details.dart';
 class InfoCard extends StatelessWidget {
   final UserModel user;
   final IconData icon; // UI expects IconData here
+  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const InfoCard({
     super.key,
     required this.user,
     required this.icon,
+    required this.onEdit,
     required this.onDelete,
   });
 
@@ -34,9 +36,18 @@ class InfoCard extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(user.profession),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: onDelete,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.blue),
+                onPressed: onEdit,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: onDelete,
+              ),
+            ],
           ),
         ),
       ),
