@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:profile_ui_practice/models/user_model.dart';
 
@@ -21,15 +22,21 @@ class UserDetail extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 60,
-                backgroundColor: Colors.blue.shade100,
-                child: Text(
-                  user.name[0].toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
+                backgroundColor: Colors.blue.shade50,
+                backgroundImage:
+                    (user.imagePath != null && user.imagePath!.isNotEmpty)
+                    ? FileImage(File(user.imagePath!))
+                    : null,
+                child: (user.imagePath == null || user.imagePath!.isEmpty)
+                    ? Text(
+                        user.name[0].toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      )
+                    : null,
               ),
             ),
             const SizedBox(height: 15),
@@ -56,24 +63,26 @@ class UserDetail extends StatelessWidget {
               subtitle: Text(user.email),
             ),
             // Skills Chips
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Wrap(
-                  spacing: 8.0,
-                  children: user.skills
-                      .split(',')
-                      .map(
-                        (skill) => Chip(
-                          label: Text(skill.trim()),
-                          backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                        ),
-                      )
-                      .toList(),
+            if (user.skills.trim().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    spacing: 8.0,
+                    children: user.skills
+                        .split(',')
+                        .where((skill) => skill.trim().isNotEmpty)
+                        .map(
+                          (skill) => Chip(
+                            label: Text(skill.trim()),
+                            backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

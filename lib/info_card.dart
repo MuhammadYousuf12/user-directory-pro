@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:profile_ui_practice/models/user_model.dart';
 import 'package:profile_ui_practice/screens/user_details.dart';
@@ -30,7 +31,16 @@ class InfoCard extends StatelessWidget {
           );
         },
         child: ListTile(
-          leading: Icon(icon, size: 30, color: Colors.blue),
+          leading: CircleAvatar(
+            backgroundColor: Colors.blue.shade50,
+            backgroundImage:
+                (user.imagePath != null && user.imagePath!.isNotEmpty)
+                ? FileImage(File(user.imagePath!))
+                : null,
+            child: (user.imagePath == null || user.imagePath!.isEmpty)
+                ? Icon(icon, size: 30, color: Colors.blue)
+                : null,
+          ),
           title: Text(
             user.name,
             style: const TextStyle(fontWeight: FontWeight.bold),

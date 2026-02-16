@@ -5,6 +5,7 @@ class UserModel {
   final String skills;
   final String phone;
   final String icon; // Storing icon name as text (e.g., "person")
+  final String? imagePath;
 
   UserModel({
     required this.name,
@@ -13,6 +14,7 @@ class UserModel {
     required this.skills,
     required this.phone,
     required this.icon,
+    this.imagePath,
   });
 
   // Converts the UserModel into a Map so it can be saved as JSON text.
@@ -24,6 +26,7 @@ class UserModel {
       'skills': skills,
       'phone': phone,
       'icon': icon,
+      'imagePath': imagePath,
     };
   }
 
@@ -36,6 +39,7 @@ class UserModel {
       skills: map['skills'],
       phone: map['phone'],
       icon: map['icon'] ?? 'person', // Default to person if icon is missing
+      imagePath: map['imagePath'],
     );
   }
 }

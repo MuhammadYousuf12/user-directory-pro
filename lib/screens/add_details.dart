@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:profile_ui_practice/models/user_model.dart';
 
 class AddDetails extends StatefulWidget {
@@ -28,16 +30,31 @@ class _AddDetailsState extends State<AddDetails> {
     super.dispose();
   }
 
+  File? _selectedImage;
+  String? _imagePath;
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+        _imagePath = pickedFile.path;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
     if (widget.userToEdit != null) {
       nameController.text = widget.userToEdit!.name;
       professionController.text = widget.userToEdit!.profession;
       emailController.text = widget.userToEdit!.email;
       phoneController.text = widget.userToEdit!.phone;
       skillsController.text = widget.userToEdit!.skills;
+      _imagePath = widget.userToEdit!.imagePath;
     }
   }
 
@@ -53,6 +70,20 @@ class _AddDetailsState extends State<AddDetails> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            GestureDetector(
+              onTap: _pickImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: _selectedImage != null
+                    ? FileImage(_selectedImage!)
+                    : (_imagePath != null
+                          ? FileImage(File(_imagePath!))
+                          : null),
+                child: (_selectedImage == null && _imagePath == null)
+                    ? const Icon(Icons.add_a_photo)
+                    : null,
+              ),
+            ),
             TextField(
               controller: nameController,
               decoration: const InputDecoration(labelText: "Enter Name"),
@@ -98,6 +129,7 @@ class _AddDetailsState extends State<AddDetails> {
                         .where((e) => e.isNotEmpty)
                         .join(','),
                     "icon": "person",
+                    "imagePath": _imagePath,
                   };
 
                   Navigator.pop(context, userInput);
