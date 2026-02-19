@@ -6,7 +6,7 @@
     </intent>
 </queries>
     <application
-        android:label="profile_ui_practice"
+        android:label="User Directory"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

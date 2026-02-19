@@ -5,13 +5,13 @@ import 'package:profile_ui_practice/screens/add_details.dart';
 import 'package:profile_ui_practice/info_card.dart';
 import 'package:profile_ui_practice/services/storage_services.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class UserListScreen extends StatefulWidget {
+  const UserListScreen({super.key});
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<UserListScreen> createState() => _UserListScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _UserListScreenState extends State<UserListScreen> {
   final ImagePicker picker = ImagePicker();
   List<UserModel> users = []; // Main list
 
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         backgroundColor: Colors.blue,
         title: const Text(
-          "Professional Circle",
+          "User Directory",
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
         ),
       ),

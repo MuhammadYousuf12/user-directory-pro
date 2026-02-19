@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:profile_ui_practice/screens/login_page.dart';
+import 'package:profile_ui_practice/screens/user_list.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         // useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: UserListScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
