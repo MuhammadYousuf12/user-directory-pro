@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:profile_ui_practice/models/user_model.dart';
 import 'package:profile_ui_practice/screens/add_details.dart';
-import 'package:profile_ui_practice/info_card.dart'; // Ensure path is correct
+import 'package:profile_ui_practice/info_card.dart';
 import 'package:profile_ui_practice/services/storage_services.dart';
 
 class LoginPage extends StatefulWidget {
@@ -69,7 +69,10 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.blue,
-        title: const Text("Profile Viewer"),
+        title: const Text(
+          "Professional Circle",
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+        ),
       ),
       body: Column(
         children: [

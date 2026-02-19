@@ -1,10 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:profile_ui_practice/models/user_model.dart';
 
 class UserDetail extends StatelessWidget {
   final UserModel user;
   const UserDetail({super.key, required this.user});
+
+  Future<void> _makeCall(String phoneNumber) async {
+    final cleanNumber = phoneNumber.replaceAll(' ', '');
+    final Uri url = Uri(scheme: 'tel', path: cleanNumber);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      debugPrint("Could not launch $url");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +63,20 @@ class UserDetail extends StatelessWidget {
             const Divider(height: 40, thickness: 1, indent: 20, endIndent: 20),
             // Phone ListTiles
             ListTile(
-              leading: const Icon(Icons.phone, color: Colors.green),
+              leading: const Icon(Icons.smartphone, color: Colors.grey),
               title: const Text("Mobile Number"),
               subtitle: Text(user.phone),
-              trailing: const Icon(Icons.call, color: Colors.green, size: 20),
+              trailing: IconButton(
+                onPressed: user.phone.isNotEmpty
+                    ? () => _makeCall(user.phone)
+                    : null,
+                icon: Icon(
+                  Icons.call,
+                  color: user.phone.isNotEmpty ? Colors.green : Colors.grey,
+                ),
+              ),
             ),
-            // ****Email ListTiles
+            // Email ListTiles
             ListTile(
               leading: const Icon(Icons.email, color: Colors.blue),
               title: const Text("Email Address"),
